@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>xeokit IFC Viewer</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+        #viewerCanvas { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+
+<canvas id="viewerCanvas"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/@xeokit/xeokit-sdk/dist/xeokit-sdk.min.js"></script>
+
+<script>
+// 1. 创建 viewer
+const viewer = new xeokit.Viewer({
+    canvasId: "viewerCanvas"
+});
+
+// 2. 创建 IFC loader
+const ifcLoader = new xeokit.IFCLoader(viewer);
+
+// 3. 加载 IFC 文件（注意：路径必须指向 viewer 文件夹）
+ifcLoader.load("./TU%20Geb%C3%A4ude%203_2019.ifc")
+    .catch(err => console.error(err));
+</script>
+
+</body>
+</html>
