@@ -4,28 +4,55 @@
     <meta charset="UTF-8" />
     <title>xeokit IFC Viewer</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
-        #viewerCanvas { width: 100%; height: 100%; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #viewerCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
     </style>
 </head>
 <body>
 
 <canvas id="viewerCanvas"></canvas>
 
-<script src="https://cdn.jsdelivr.net/npm/@xeokit/xeokit-sdk/dist/xeokit-sdk.min.js"></script>
+<script type="module">
+    import { Viewer } from "https://cdn.jsdelivr.net/npm/@xeokit/xeokit-sdk/dist/xeokit-sdk.es.min.js";
+    import { WebIFCLoaderPlugin } from "https://cdn.jsdelivr.net/npm/@xeokit/ifc/dist/xeokit-ifc.es.min.js";
+    import * as WebIFC from "https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/web-ifc-api.js";
 
-<script>
-// 1. 创建 viewer
-const viewer = new xeokit.Viewer({
-    canvasId: "viewerCanvas"
-});
+    const viewer = new Viewer({
+        canvasId: "viewerCanvas",
+        transparent: true
+    });
 
-// 2. 创建 IFC loader
-const ifcLoader = new xeokit.IFCLoader(viewer);
+    viewer.camera.eye = [-20, 20, 30];
+    viewer.camera.look = [0, 0, 0];
+    viewer.camera.up = [0, 1, 0];
 
-// 3. 加载 IFC 文件（注意：路径必须指向 viewer 文件夹）
-ifcLoader.load("./TU%20Geb%C3%A4ude%203_2019.ifc")
-    .catch(err => console.error(err));
+    // WebIFC loader
+    const IfcAPI = new WebIFC.IfcAPI();
+    IfcAPI.SetWasmPath("https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/");
+
+    IfcAPI.Init().then(() => {
+
+        const ifcLoader = new WebIFCLoaderPlugin(viewer, {
+            WebIFC,
+            IfcAPI
+        });
+
+        ifcLoader.load({
+            id: "myModel",
+            src: "./TU%20Geb%C3%A4ude%203_2019.ifc",
+            edges: true
+        });
+    });
 </script>
 
 </body>
